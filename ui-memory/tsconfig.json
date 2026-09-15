@@ -1,0 +1,42 @@
+{
+  // Compiler shape (libs, JSX mode, ambient type roots, strictness) is the
+  // host checkout's own Client shape, so this plugin is checked under the same
+  // options its dependencies are.
+  "extends": "G:/work/tool/tsconfig.base.client.json",
+  "compilerOptions": {
+    // A check-only program: nothing is emitted, so leave the base's
+    // composite/incremental project settings off.
+    "composite": false,
+    "incremental": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "noEmit": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    // This package is a CONSUMER of the host's published Client API, so it
+    // checks against the host's built declarations (`lib/types`) rather than
+    // its sources. The host's source graph only type-checks under its own
+    // per-package project settings; pulling it into this program instead
+    // reports the host's own files against this config's options.
+    "paths": {
+      "@deepseek-ai/cordis": ["G:/work/tool/vendor/cordis/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-client-store": ["G:/work/tool/packages/client/store/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-client-ui-slots": ["G:/work/tool/packages/client/ui-slots/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-client-ui-primitives": ["G:/work/tool/packages/client/ui-primitives/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-client-ui-conversation/client": [
+        "G:/work/tool/packages/client/ui-conversation/lib/types/client/index.d.ts"
+      ],
+      "@deepseek-ai/dsh-client-locale/client": [
+        "G:/work/tool/packages/client/locale/lib/types/client/index.d.ts"
+      ],
+      "@deepseek-ai/dsh-client-ui-renderer/client": [
+        "G:/work/tool/packages/client/ui-renderer/lib/types/client/index.d.ts"
+      ]
+    }
+  },
+  "include": ["src", "tests"]
+}

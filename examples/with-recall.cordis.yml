@@ -1,0 +1,32 @@
+# Memory with corpus recall. Recall reads the SQLite full-text index over prior
+# sessions, which the shipped bundles leave disabled (`openAt: never` over an
+# in-memory index), so this overlay enables a durable index under $DSH_HOME
+# before mounting the recall provider.
+#
+#   dsh web --patch "G:/work/dsh-mem/examples/with-recall.cordis.yml"
+#
+# Recall is additive: the curated store, the memory tool, and the Memory tab all
+# work without it.
+- id: session-query-sqlite
+  config:
+    path: !!js dshHomePath('session-index.sqlite')
+    openAt: first-search
+
+- insert:
+    - id: memory
+      name: 'G:/work/dsh-mem/memory/src/index.ts'
+
+    - id: memory-curated
+      name: 'G:/work/dsh-mem/memory-curated/src/index.ts'
+
+    - id: tool-memory
+      name: 'G:/work/dsh-mem/tool-memory/src/index.ts'
+
+    - id: memory-api
+      name: 'G:/work/dsh-mem/memory-api/src/index.ts'
+
+    - id: ui-memory
+      name: 'G:/work/dsh-mem/ui-memory/lib/index.js'
+
+    - id: memory-recall
+      name: 'G:/work/dsh-mem/memory-recall/src/index.ts'

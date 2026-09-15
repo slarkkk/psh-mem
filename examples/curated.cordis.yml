@@ -1,0 +1,29 @@
+# Opt-in composition for the cross-session memory plugin.
+#
+# The plugin lives outside the harness checkout, so each entry names its source
+# file directly instead of a workspace package name.
+#
+#   dsh web --patch "G:/work/dsh-mem/examples/curated.cordis.yml"
+#
+# To keep the selection across runs, merge this file's `insert` list into a user
+# patch layer ($DSH_HOME/profiles/<name>/cordis.patch.yml for one profile, or
+# $DSH_HOME/cordis.patch.yml for every profile).
+- insert:
+    - id: memory
+      name: 'G:/work/dsh-mem/memory/src/index.ts'
+
+    - id: memory-curated
+      name: 'G:/work/dsh-mem/memory-curated/src/index.ts'
+
+    - id: tool-memory
+      name: 'G:/work/dsh-mem/tool-memory/src/index.ts'
+
+    # Host endpoints the browser tab reads and writes through.
+    - id: memory-api
+      name: 'G:/work/dsh-mem/memory-api/src/index.ts'
+
+    # The "Memory" tab itself. Its host half is an empty apply; client-modules
+    # walks up from this entry to ui-memory/package.json for dsh.client and
+    # exports["./client"], then serves lib/client.js to the browser.
+    - id: ui-memory
+      name: 'G:/work/dsh-mem/ui-memory/lib/index.js'

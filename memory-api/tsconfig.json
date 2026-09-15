@@ -1,0 +1,44 @@
+{
+  // This package is loaded from source by absolute path, so it resolves every
+  // `@deepseek-ai/*` specifier through the tree's generated alias map
+  // (`../tsconfig.json`, written by sync-paths.mjs) rather than through the
+  // checkout's own `extends`: the sibling packages' copies extend
+  // `../../../tsconfig.base.json`, which resolves outside this tree and does
+  // not exist there.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "target": "es2024",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["es2024"],
+    "types": ["node"],
+    // Node type definitions live in the host checkout, the only installed
+    // dependency tree this package compiles against.
+    "typeRoots": ["G:/work/tool/node_modules/@types"],
+    "strict": true,
+    // The alias map pulls the vendored Cordis sources into this one program,
+    // and the checkout compiles those under their own project, which relaxes
+    // exactly these flags (vendor/cordis/tsconfig.json). One program shares one
+    // option set, so they are relaxed here too; the options above and below
+    // still guard this package's own sources.
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "strictFunctionTypes": false,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitOverride": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "verbatimModuleSyntax": false,
+    "skipLibCheck": true,
+    // The program spans vendor, host, and this package, so it has no single
+    // project directory to emit into: this file typechecks only. The package is
+    // loaded from source by absolute path, never built.
+    "noEmit": true
+  },
+  "include": ["src"]
+}

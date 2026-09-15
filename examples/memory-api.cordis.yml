@@ -1,0 +1,15 @@
+# The browser HTTP face of memory, on top of a profile that already mounts the
+# capability. This tree's profile patch layer (or examples/curated.cordis.yml)
+# inserts `memory` and a provider; this overlay adds only the routes, because a
+# profile that already owns the `memory` entry id rejects a second one.
+#
+#   dsh web --patch "G:/work/dsh-mem/examples/memory-api.cordis.yml" --no-open --port 0
+#
+# Then, with the port the server printed:
+#   curl -H "x-dsh-memory: 1" http://127.0.0.1:<port>/memory/state
+#
+# Both routes require the `x-dsh-memory: 1` header and an own-origin `Origin`
+# when one is present (see ../memory-api/README.md).
+- insert:
+    - id: memory-api
+      name: 'G:/work/dsh-mem/memory-api/src/index.ts'

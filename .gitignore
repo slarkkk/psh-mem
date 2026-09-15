@@ -1,0 +1,7 @@
+# Build toolchain and dependency links. `lib/` IS committed on purpose: the
+# profile patch resolves `ui-memory/lib/index.js` as a Loader entry and
+# client-modules serves the built `lib/client.js` to the browser, so the tree
+# must stay loadable without a rebuild.
+node_modules/
+*.tsbuildinfo
+coverage/
