@@ -12,6 +12,7 @@ import {
   createMemoryStore, MemoryController, type MemoryStateReport, type MemoryTarget,
 } from '../src/client/state.ts'
 import { MemoryView, type MemoryViewProps } from '../src/client/MemoryView.tsx'
+import { createLessonsStore, LessonsController } from '../src/client/lessons.ts'
 
 afterEach(() => {
   cleanup()
@@ -72,6 +73,21 @@ async function mount(options: { read?: StubResponse; write?: StubResponse } = {}
   const store = createMemoryStore()
   const controller = new MemoryController(store, { fetchImpl })
   await controller.load()
+  // 教训区用独立的传输：它不算进记忆 API 的调用记录。
+  const lessonsFetch = (async (route: string) => {
+    if (route !== '/lessons/state') return respond({ ok: true })
+    return respond({
+      workspace: '/tmp/ws',
+      counts: { total: 1, stale: 0, hits: 2 },
+      lessons: [{
+        id: 'abcdef12', title: '构建前先清 lib', fix: '先 pnpm run clean', tags: ['pnpm'],
+        paths: [], tools: [], scope: 'workspace', hits: 2, ageDays: 3, stale: false,
+      }],
+    })
+  }) as unknown as typeof fetch
+  const lessonsStore = createLessonsStore()
+  const lessonsController = new LessonsController(lessonsStore, { fetchImpl: lessonsFetch })
+  await lessonsController.load()
   const props = {
     // The fixture selector reads the store directly: component specs assert a
     // given snapshot, and the renderer's real binding is ui-renderer's job.
@@ -87,6 +103,11 @@ async function mount(options: { read?: StubResponse; write?: StubResponse } = {}
     restoreEntry: (target: MemoryTarget, index: number) => { controller.restoreEntry(target, index) },
     addEntry: (target: MemoryTarget, text: string) => { controller.addEntry(target, text) },
     dropAddition: (target: MemoryTarget, index: number) => { controller.dropAddition(target, index) },
+    useLessons: (selector: (snapshot: ReturnType<typeof lessonsStore.getSnapshot>) => unknown) =>
+      selector(lessonsStore.getSnapshot()),
+    loadLessons: () => { void lessonsController.load() },
+    confirmLesson: (id: string) => { void lessonsController.confirm(id) },
+    forgetLesson: (id: string) => { void lessonsController.forget(id) },
   } as unknown as MemoryViewProps
   const view = render(<MemoryView {...props} />)
   // The fixture selector does not subscribe, so a store mutation needs an
@@ -112,6 +133,14 @@ describe('MemoryView', () => {
     expect(memorySection().getByDisplayValue('项目代号是 tool')).toBeTruthy()
     expect(userSection().getByText('5 / 100 字符')).toBeTruthy()
     expect(memorySection().getByText('9 / 200 字符')).toBeTruthy()
+  })
+
+  it('renders the recorded lessons inside the memory page', async () => {
+    await mount()
+    expect(screen.getByText('构建前先清 lib')).toBeTruthy()
+    expect(screen.getByText('先 pnpm run clean')).toBeTruthy()
+    expect(screen.getByRole('button', { name: '仍然成立' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '删除' })).toBeTruthy()
   })
 
   it('posts an edited entry as a replace operation for its own target', async () => {

@@ -11,7 +11,9 @@ import type { ConvViewProps } from '@deepseek-ai/dsh-client-ui-conversation/clie
 import type { SnapshotStore } from '@deepseek-ai/dsh-client-store'
 import { Button } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { InjectFace, PropsLocale, TranslateNS } from '@deepseek-ai/dsh-client-ui-slots'
+import { LessonsSection } from './LessonsSection.tsx'
 import { NS, type MemoryKey } from './locales.ts'
+import type { LessonsSnapshot } from './lessons.ts'
 import {
   MEMORY_TARGETS, pendingOperations,
   type MemoryNotice, type MemorySectionState, type MemorySnapshot, type MemoryTarget,
@@ -27,6 +29,7 @@ type MemoryTranslate = TranslateNS<typeof NS>
 export interface MemoryViewInjected {
   hooks: {
     memory: SnapshotStore<MemorySnapshot>
+    lessons: SnapshotStore<LessonsSnapshot>
   }
   /** Read both targets' entries and usage. */
   load: () => void
@@ -67,7 +70,8 @@ function assertNever(value: never): never {
  */
 export function MemoryView(props: MemoryViewProps) {
   const {
-    useMemory, t, load, save, setDraft, removeEntry, restoreEntry, addEntry, dropAddition,
+    useMemory, useLessons, t, load, save, setDraft, removeEntry, restoreEntry, addEntry, dropAddition,
+    loadLessons, confirmLesson, forgetLesson,
   } = props
   const snapshot = useMemory(state => state)
 
@@ -101,6 +105,13 @@ export function MemoryView(props: MemoryViewProps) {
             onDropAddition={index => { dropAddition(target, index) }}
           />
         ))}
+        <LessonsSection
+          t={t}
+          useLessons={useLessons}
+          loadLessons={loadLessons}
+          confirmLesson={confirmLesson}
+          forgetLesson={forgetLesson}
+        />
       </div>
     </div>
   )

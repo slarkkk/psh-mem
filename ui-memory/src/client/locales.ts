@@ -9,6 +9,7 @@ export type MemoryKey =
   | 'view.memory'
   | 'section.user'
   | 'section.memory'
+  | 'section.lessons'
   | 'usage.text'
   | 'entries.empty'
   | 'entry.editorLabel'
@@ -29,6 +30,15 @@ export type MemoryKey =
   | 'notice.unchanged'
   | 'notice.failed'
   | 'notice.status'
+  | 'lessons.count'
+  | 'lessons.empty'
+  | 'lessons.stale'
+  | 'lessons.confirm'
+  | 'lessons.forget'
+  | 'lessons.meta'
+  | 'lessons.cause'
+  | 'lessons.failed'
+  | 'lessons.reload'
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
@@ -42,6 +52,7 @@ export const zh: Record<MemoryKey, string> = {
   'view.memory': '记忆',
   'section.user': '用户档案',
   'section.memory': '记忆',
+  'section.lessons': '失败教训',
   'usage.text': '{chars} / {limit} 字符',
   'entries.empty': '暂无条目',
   'entry.editorLabel': '条目内容',
@@ -62,6 +73,15 @@ export const zh: Record<MemoryKey, string> = {
   'notice.unchanged': '没有需要保存的改动',
   'notice.failed': '请求失败',
   'notice.status': 'HTTP {status}',
+  'lessons.count': '{total} 条（过期 {stale}）',
+  'lessons.empty': '还没有记录。一次非显然的失败被修复后，让模型用 lesson 记一条。',
+  'lessons.stale': '过期',
+  'lessons.confirm': '仍然成立',
+  'lessons.forget': '删除',
+  'lessons.meta': '命中 {hits} 次 · {days} 天前确认',
+  'lessons.cause': '根因：{cause}',
+  'lessons.failed': '教训库请求失败',
+  'lessons.reload': '重新加载教训',
 }
 
 /** en dictionary. */
@@ -69,6 +89,7 @@ export const en: Record<MemoryKey, string> = {
   'view.memory': 'Memory',
   'section.user': 'User profile',
   'section.memory': 'Memory',
+  'section.lessons': 'Lessons',
   'usage.text': '{chars} / {limit} characters',
   'entries.empty': 'No entries yet',
   'entry.editorLabel': 'Entry text',
@@ -89,4 +110,13 @@ export const en: Record<MemoryKey, string> = {
   'notice.unchanged': 'Nothing to save',
   'notice.failed': 'Request failed',
   'notice.status': 'HTTP {status}',
+  'lessons.count': '{total} entries ({stale} stale)',
+  'lessons.empty': 'Nothing recorded yet. After a non-obvious failure is fixed, ask the model to record it with lesson.',
+  'lessons.stale': 'stale',
+  'lessons.confirm': 'Still valid',
+  'lessons.forget': 'Delete',
+  'lessons.meta': 'used {hits} times · confirmed {days} days ago',
+  'lessons.cause': 'Cause: {cause}',
+  'lessons.failed': 'Lessons request failed',
+  'lessons.reload': 'Reload lessons',
 }

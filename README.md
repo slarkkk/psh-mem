@@ -104,8 +104,7 @@ pnpm pack --pack-destination ..
 | `tool-memory/` | `@deepseek-ai/dsh-tool-memory` | 模型侧的 `memory` 工具（schema、描述、结果渲染） |
 | `memory-api/` | `@deepseek-ai/dsh-memory-api` | 浏览器端点 `GET /memory/state`、`POST /memory/write` |
 | `ui-memory/` | `@deepseek-ai/dsh-client-ui-memory` | 「记忆」tab 的浏览器实现（`lib/client.js` 为构建产物） |
-| `lessons/` | — | 失败教训库：`lesson` 工具、提醒哨兵、`/lessons/*` 端点 |
-| `ui-lessons/` | `@deepseek-ai/dsh-client-ui-lessons` | 「教训」tab 的浏览器实现（手写预构建 bundle） |
+| `lessons/` | — | 失败教训库：`lesson` 工具、提醒哨兵、`/lessons/*` 端点（界面在「记忆」页底部） |
 | `memory-recall/` | `@deepseek-ai/dsh-memory-recall` | 可选的仅召回提供方（检索历史会话），默认不挂载 |
 | `desktop-bundle/` | — | 桌面端可安装包：编译产物 + bundle 补丁 + 清单 |
 
@@ -123,7 +122,7 @@ pnpm pack --pack-destination ..
 
 自动提醒只在回合开头或工具失败后评估，分数阈值 + 每轮上限 2 + 冷却 10 分钟 + 过期排除，避免念旧账。数据：工作区 `.dsh/lessons.json`；全局 `$DSH_HOME/storages/lessons.json`。浏览器端点：`GET /lessons/state`、`POST /lessons/confirm|forget`（同源 + `x-dsh-lessons` 头）。
 
-桌面端：`build-desktop-bundle.mjs` 会把 `lessons/` 编进 `lib/lessons.js` 并写入 bundle 补丁，装一个 tgz 就同时拿到工具与端点；**「教训」tab 目前只在 Web 端出现**（一个包只有一行 `dsh.client`，桌面端的浏览器半边仍归「记忆」tab）。
+界面不另开 tab：`ui-memory` 的「记忆」页底部就是「失败教训」区（确认仍然成立 / 删除 / 标签），桌面端同一份 bundle 也有。`build-desktop-bundle.mjs` 会把 `lessons/` 编进 `lib/lessons.js`，并把新的 `ui-memory/lib/client.js` 复制进 bundle，装一个 tgz 就有工具、端点与这块界面。
 
 分层是标准的 DSH 能力接缝：Service Definition（`memory`）+ Provider（`memory-curated`）+
 Consumers（工具、HTTP 面、界面）。换存储后端只需要换 Provider，工具 schema 和提示词不动。
@@ -143,6 +142,15 @@ pnpm exec vitest run --config <...>/ui-memory/vitest.config.ts
 ```
 
 改了 `ui-memory/src/` 要重建浏览器包；改了任意宿主侧源码、要发桌面端，还要重建 bundle。
+
+浏览器包用 tsdown 构建。宿主的 `tsconfig.base.client.json` 在部分环境里会让 tsdown 加载失败（`Package subpath is not defined by exports`），因此包内放了一份最小配置兜底：
+
+```powershell
+cd ui-memory
+node <dsh-checkout>\node_modules\tsdown\dist\run.mjs --config tsdown.config.ts --tsconfig tsconfig.build.json
+```
+
+`desktop-bundle/lib/client.js` 是 `ui-memory/lib/client.js` 的副本，重建后记得复制过去；桌面端宿主插件（`lessons.js` 等）可以用 `tsc --noCheck` 单独产出，或直接跑 `node build-desktop-bundle.mjs <dsh-checkout>`（需要 esbuild；本机沙箱会拦子进程写文件）。
 
 ## 兼容性
 

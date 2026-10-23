@@ -39,10 +39,6 @@
 # 外加 agent/pre-step 哨兵（回合开头或工具失败后提醒相关教训）。
 # 数据：工作区 .dsh/lessons.json；全局 $DSH_HOME/storages/lessons.json。
 # 浏览器端点：GET /lessons/state、POST /lessons/confirm|forget（同源 + x-dsh-lessons 头）。
+# 界面不另开 tab：ui-memory 的「记忆」页底部就是「失败教训」区。
 - id: lessons
   name: './lessons/src/index.ts'
-
-# 「教训」tab 本体（浏览器半边）。宿主半边是空 apply，client-modules 从
-# ui-lessons/package.json 的 dsh.client 与 exports["./client"] 取 lib/client.js。
-- id: ui-lessons
-  name: './ui-lessons/index.js'

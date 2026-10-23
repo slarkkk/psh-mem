@@ -179,3 +179,67 @@
   display: flex;
   justify-content: flex-end;
 }
+
+/* Lessons block inside the memory page: one row per recorded failure. */
+.spacer {
+  flex: 1;
+}
+
+.lesson {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 0.5px solid var(--dsw-alias-border-l1);
+  border-radius: 6px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.lessonMain {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lessonTitle {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.lessonFix {
+  margin: 0;
+  font-size: 12px;
+  color: var(--dsw-alias-label-secondary);
+  word-break: break-word;
+}
+
+.lessonActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lessonMeta {
+  margin: 0;
+  font-size: 11px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.tag,
+.staleTag {
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.tag {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.staleTag {
+  color: var(--dsw-alias-state-warning-primary);
+  border: 0.5px solid var(--dsw-alias-state-warning-primary);
+}

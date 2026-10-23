@@ -12,6 +12,7 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 // Type-only: pulls the renderer's Context merge (ctx.slots).
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
+import { createLessonsStore, LessonsController } from './lessons.ts'
 import { MemoryView, type MemoryViewInjected } from './MemoryView.tsx'
 import { en, NS, zh } from './locales.ts'
 import { createMemoryStore, MemoryController } from './state.ts'
@@ -30,10 +31,14 @@ export function apply(ctx: Context): void {
   const t = ctx.locale.bind(NS)
   const store = createMemoryStore()
   const controller = new MemoryController(store)
+  const lessonsStore = createLessonsStore()
+  const lessonsController = new LessonsController(lessonsStore)
   ctx.effect(() => () => { controller.dispose() }, 'ui-memory: controller lifecycle')
+  ctx.effect(() => () => { lessonsController.dispose() }, 'ui-memory: lessons lifecycle')
   // The host serves the memory API on this page's origin, so the one read at
   // plugin start is what fills the tab; the tab's Reload action refreshes it.
   void controller.load()
+  void lessonsController.load()
 
   ctx.slots.inject('conversation.view', () => ctx.slots.register({
     name: 'conversation.view',
@@ -42,7 +47,7 @@ export function apply(ctx: Context): void {
     locale: NS,
     label: () => t('view.memory'),
     inject: (): MemoryViewInjected => ({
-      hooks: { memory: store },
+      hooks: { memory: store, lessons: lessonsStore },
       load: () => { void controller.load() },
       save: (target) => { void controller.save(target) },
       setDraft: (target, index, text) => { controller.setDraft(target, index, text) },
@@ -50,6 +55,9 @@ export function apply(ctx: Context): void {
       restoreEntry: (target, index) => { controller.restoreEntry(target, index) },
       addEntry: (target, text) => { controller.addEntry(target, text) },
       dropAddition: (target, index) => { controller.dropAddition(target, index) },
+      loadLessons: () => { void lessonsController.load() },
+      confirmLesson: (id) => { void lessonsController.confirm(id) },
+      forgetLesson: (id) => { void lessonsController.forget(id) },
     }),
   }, MemoryView))
 }
