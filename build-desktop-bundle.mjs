@@ -10,7 +10,7 @@
 // single cordis Service identity.
 //
 //   node build-desktop-bundle.mjs [hostRoot]
-import { copyFileSync, mkdirSync, readdirSync, statSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
@@ -48,9 +48,29 @@ const entryPoints = {
   'memory-curated': join(here, 'memory-curated/src/index.ts'),
   'tool-memory': join(here, 'tool-memory/src/index.ts'),
   'memory-api': join(here, 'memory-api/src/index.ts'),
+  lessons: join(here, 'lessons/src/index.ts'),
 }
 
-const esbuildModule = await import(pathToFileURL(join(host, 'node_modules/esbuild/lib/main.js')).href)
+// pnpm 不把 esbuild 提升到根 node_modules：先按包解析，再从 .pnpm 存储里找。
+function esbuildPath() {
+  const direct = join(host, 'node_modules', 'esbuild', 'lib', 'main.js')
+  if (existsSync(direct)) return direct
+  const store = join(host, 'node_modules', '.pnpm')
+  if (!existsSync(store)) return undefined
+  const candidates = readdirSync(store)
+    .filter(name => name.startsWith('esbuild@'))
+    .sort()
+    .reverse()
+  for (const name of candidates) {
+    const candidate = join(store, name, 'node_modules', 'esbuild', 'lib', 'main.js')
+    if (existsSync(candidate)) return candidate
+  }
+  return undefined
+}
+
+const resolvedEsbuild = esbuildPath()
+if (resolvedEsbuild === undefined) throw new Error(`找不到 esbuild（宿主：${host}）`)
+const esbuildModule = await import(pathToFileURL(resolvedEsbuild).href)
 const esbuild = esbuildModule.build === undefined ? esbuildModule.default : esbuildModule
 
 mkdirSync(outDir, { recursive: true })

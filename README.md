@@ -104,8 +104,26 @@ pnpm pack --pack-destination ..
 | `tool-memory/` | `@deepseek-ai/dsh-tool-memory` | 模型侧的 `memory` 工具（schema、描述、结果渲染） |
 | `memory-api/` | `@deepseek-ai/dsh-memory-api` | 浏览器端点 `GET /memory/state`、`POST /memory/write` |
 | `ui-memory/` | `@deepseek-ai/dsh-client-ui-memory` | 「记忆」tab 的浏览器实现（`lib/client.js` 为构建产物） |
+| `lessons/` | — | 失败教训库：`lesson` 工具、提醒哨兵、`/lessons/*` 端点 |
+| `ui-lessons/` | `@deepseek-ai/dsh-client-ui-lessons` | 「教训」tab 的浏览器实现（手写预构建 bundle） |
 | `memory-recall/` | `@deepseek-ai/dsh-memory-recall` | 可选的仅召回提供方（检索历史会话），默认不挂载 |
 | `desktop-bundle/` | — | 桌面端可安装包：编译产物 + bundle 补丁 + 清单 |
+
+### 失败教训库（lessons）
+
+记忆存「事实」，教训库存「负经验」：一次非显然的失败、根因、真正有效的做法。工具 `lesson`：
+
+| action | 作用 |
+|---|---|
+| `record` | 记一条：`title` + `fix` 必填，`symptom`/`cause`/`tags`/`paths`/`tools`/`scope` 可选 |
+| `recall` | 按关键词或当前会话活动查相关教训 |
+| `list` / `stats` | 列表 / 统计 |
+| `confirm` | 「仍然成立」：刷新确认时间，过期条目重新参与自动提醒 |
+| `forget` / `archive` | 删除 / 归档 |
+
+自动提醒只在回合开头或工具失败后评估，分数阈值 + 每轮上限 2 + 冷却 10 分钟 + 过期排除，避免念旧账。数据：工作区 `.dsh/lessons.json`；全局 `$DSH_HOME/storages/lessons.json`。浏览器端点：`GET /lessons/state`、`POST /lessons/confirm|forget`（同源 + `x-dsh-lessons` 头）。
+
+桌面端：`build-desktop-bundle.mjs` 会把 `lessons/` 编进 `lib/lessons.js` 并写入 bundle 补丁，装一个 tgz 就同时拿到工具与端点；**「教训」tab 目前只在 Web 端出现**（一个包只有一行 `dsh.client`，桌面端的浏览器半边仍归「记忆」tab）。
 
 分层是标准的 DSH 能力接缝：Service Definition（`memory`）+ Provider（`memory-curated`）+
 Consumers（工具、HTTP 面、界面）。换存储后端只需要换 Provider，工具 schema 和提示词不动。

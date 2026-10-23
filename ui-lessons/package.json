@@ -1,0 +1,25 @@
+{
+  "name": "@deepseek-ai/dsh-client-ui-lessons",
+  "version": "0.1.0",
+  "description": "「教训」tab：查看失败教训库，确认仍然成立或删除，按标签筛选",
+  "type": "module",
+  "private": true,
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-renderer"
+      ],
+      "platform": "web"
+    }
+  },
+  "license": "MIT"
+}

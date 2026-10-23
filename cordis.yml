@@ -34,3 +34,15 @@
 # ui-memory/package.json 的 dsh.client 与 exports["./client"]，把 lib/client.js 发给浏览器。
 - id: ui-memory
   name: './ui-memory/lib/index.js'
+
+# 失败教训库：记录/复用「一次非显然的失败 + 根因 + 有效做法」。工具 `lesson`，
+# 外加 agent/pre-step 哨兵（回合开头或工具失败后提醒相关教训）。
+# 数据：工作区 .dsh/lessons.json；全局 $DSH_HOME/storages/lessons.json。
+# 浏览器端点：GET /lessons/state、POST /lessons/confirm|forget（同源 + x-dsh-lessons 头）。
+- id: lessons
+  name: './lessons/src/index.ts'
+
+# 「教训」tab 本体（浏览器半边）。宿主半边是空 apply，client-modules 从
+# ui-lessons/package.json 的 dsh.client 与 exports["./client"] 取 lib/client.js。
+- id: ui-lessons
+  name: './ui-lessons/index.js'

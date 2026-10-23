@@ -22,6 +22,12 @@
     - id: memory-api
       name: '@deepseek-ai/dsh-client-ui-memory/memory-api'
 
+    # 失败教训库：lesson 工具 + 提醒哨兵 + /lessons/* 端点。
+    # 注意：桌面端只有一个 dsh.client 行（记忆 tab），因此「教训」tab 目前只在
+    # Web 端出现；桌面端拿到的是工具与端点。
+    - id: lessons
+      name: '@deepseek-ai/dsh-client-ui-memory/lessons'
+
     # 「记忆」tab 本体：宿主半边是空 apply，client-modules 从本包 package.json 的
     # dsh.client 与 exports["./client"] 取 lib/client.js。
     - id: ui-memory

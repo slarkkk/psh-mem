@@ -12,6 +12,7 @@
     "./memory-curated": "./lib/memory-curated.js",
     "./tool-memory": "./lib/tool-memory.js",
     "./memory-api": "./lib/memory-api.js",
+    "./lessons": "./lib/lessons.js",
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
