@@ -169,3 +169,4 @@ node <dsh-checkout>\node_modules\tsdown\dist\run.mjs --config tsdown.config.ts -
 ## 许可
 
 MIT（见 [LICENSE](LICENSE) 与各包 `package.json`）。
+> `lessons/` 必须保留自己的 `package.json`（`type: module`）：没有它时 tsx 按 CommonJS 加载，宿主的 tsconfig `paths` 不参与解析，`@deepseek-ai/*` 会直接 `MODULE_NOT_FOUND`，表现为 `/lessons/state` 404、工具消失——且没有任何显式报错。

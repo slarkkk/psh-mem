@@ -1,0 +1,13 @@
+{
+  "name": "@local/dsh-lessons",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "失败教训库：lesson 工具、提醒哨兵、/lessons/* 端点（界面在「记忆」页底部）",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./engine": "./src/engine.ts",
+    "./cli": "./src/cli.ts"
+  }
+}
