@@ -54,8 +54,15 @@ export const Config: z<Config> = z.object({
 export function apply(ctx: Context, config: Config = {}): void {
   if (config.enabled === false) return
   // Read per request: the route outlives any single bind, and the fence
-  // compares against whatever port this server is listening on.
-  const port = (): number => ctx.webServer.port
+  // compares against whatever port this server is listening on. The getter is
+  // `number | undefined` because it is unbound before `listen`; a request can
+  // only arrive after the listener bound, so an undefined port here is a
+  // server-side defect rather than a reachable state.
+  const port = (): number => {
+    const listening = ctx.webServer.port
+    if (listening === undefined) throw new Error('memory-api: the web server has not bound a port')
+    return listening
+  }
   ctx.effect(
     () => ctx.webServer.register(createStateRoute(ctx.memory, port)),
     `memory-api: GET ${MEMORY_STATE_PATH}`,

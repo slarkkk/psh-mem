@@ -1,0 +1,43 @@
+{
+  "name": "@deepseek-ai/dsh-client-ui-memory",
+  "version": "0.1.0",
+  "description": "Cross-session memory for DSH Desktop: memory service, curated user/memory store, the memory tool, the browser API, and the Memory tab",
+  "type": "module",
+  "private": true,
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./memory": "./lib/memory.js",
+    "./memory-curated": "./lib/memory-curated.js",
+    "./tool-memory": "./lib/tool-memory.js",
+    "./memory-api": "./lib/memory-api.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/*.js",
+    "lib/client.js.map",
+    "cordis.patch.yml"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": [
+        "./cordis.patch.yml"
+      ]
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-store",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-renderer"
+      ],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.0"
+  }
+}

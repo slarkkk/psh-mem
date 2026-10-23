@@ -1,0 +1,51 @@
+{
+  // Check-only program for the plugin's HOST-side packages.
+  //
+  // They run from source inside the host checkout (tsx launcher + the host
+  // tsconfig `paths` aliases), but they belong to no host aggregate, so nothing
+  // type-checks them against the version they are loaded into. This config does,
+  // against the host's built declarations (`lib/types`) rather than its sources:
+  // the host source graph only type-checks under its own per-package project
+  // settings, so pulling it in would report the host's files against these
+  // options.
+  //
+  // Run after a host upgrade, from this directory:
+  //   G:/work/tool/node_modules/.bin/tsc -p tsconfig.check.json
+  "extends": "G:/work/tool/tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "noEmit": true,
+    "typeRoots": [
+      "G:/work/tool/node_modules/@types",
+      "G:/work/dsh-mem/node_modules/@types"
+    ],
+    "paths": {
+      "@deepseek-ai/cordis": ["G:/work/tool/vendor/cordis/lib/types/index.d.ts"],
+      "@deepseek-ai/schemastery": ["G:/work/tool/vendor/schemastery/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-agent": ["G:/work/tool/packages/core/agent/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-host-webserver": ["G:/work/tool/packages/host/webserver/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-llm": ["G:/work/tool/packages/llm/llm/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-session": ["G:/work/tool/packages/core/session/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-session-query": ["G:/work/tool/packages/session-query/session-query/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-storage-domain": ["G:/work/tool/packages/storage/storage-domain/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-system-prompt": ["G:/work/tool/packages/core/system-prompt/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-tools": ["G:/work/tool/packages/core/tools/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-util-values": ["G:/work/tool/packages/util/values/lib/types/index.d.ts"],
+      "@deepseek-ai/dsh-memory": ["G:/work/dsh-mem/memory/src/index.ts"],
+      "@deepseek-ai/dsh-memory-curated": ["G:/work/dsh-mem/memory-curated/src/index.ts"],
+      "@deepseek-ai/dsh-memory-recall": ["G:/work/dsh-mem/memory-recall/src/index.ts"],
+      "@deepseek-ai/dsh-tool-memory": ["G:/work/dsh-mem/tool-memory/src/index.ts"]
+    }
+  },
+  "include": [
+    "memory/src",
+    "memory-curated/src",
+    "memory-recall/src",
+    "tool-memory/src",
+    "memory-api/src"
+  ]
+}

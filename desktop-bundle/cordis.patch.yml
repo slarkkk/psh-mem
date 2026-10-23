@@ -1,0 +1,28 @@
+# 跨会话记忆插件包（Desktop 可安装 bundle 层）
+#
+# 这个文件由包清单的 dsh.bundle.patch 声明。每一行都指向本包自己的子路径，
+# 因为五部分代码都编译进了这个包里（lib/*.js），不再依赖 <repo> 的源码树：
+# Desktop 是打包运行时，源码 .ts + tsconfig paths 那套只对 Web 源码启动生效。
+#
+# 数据落在 $DSH_HOME/storages/memory.json，与 Web 端共用同一份。
+# 依赖的宿主包（cordis / dsh-tools / …）由 Desktop 的 profile 解析层指到 app.asar 那份，
+# 所以这里的裸导入不必也不应该由 pnpm 安装第二份。
+
+- insert:
+    - id: memory
+      name: '@deepseek-ai/dsh-client-ui-memory/memory'
+
+    - id: memory-curated
+      name: '@deepseek-ai/dsh-client-ui-memory/memory-curated'
+
+    - id: tool-memory
+      name: '@deepseek-ai/dsh-client-ui-memory/tool-memory'
+
+    # 浏览器 tab 的宿主端点：GET /memory/state、POST /memory/write
+    - id: memory-api
+      name: '@deepseek-ai/dsh-client-ui-memory/memory-api'
+
+    # 「记忆」tab 本体：宿主半边是空 apply，client-modules 从本包 package.json 的
+    # dsh.client 与 exports["./client"] 取 lib/client.js。
+    - id: ui-memory
+      name: '@deepseek-ai/dsh-client-ui-memory'

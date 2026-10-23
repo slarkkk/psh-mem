@@ -1,0 +1,36 @@
+# 跨会话记忆插件包 —— 整包的条目清单，profile 里只需一个 include 行挂载：
+#
+#   - insert:
+#       - id: memory-pack
+#         name: '@deepseek-ai/cordis-plugin-include'
+#         config:
+#           path: 'file:///<repo>/cordis.yml'
+#
+# 这里的相对名字按本文件所在目录解析，所以整个仓库可以整体移动；换机器或换盘符时
+# 只改 profile 里那一条 include 的 path（必须写成 file:/// 绝对 URL，include 会把
+# 它转成文件路径）。
+#
+# 数据落在 $DSH_HOME/storages/memory.json，两个 target：user（用户档案）/ memory（你的笔记）。
+# 目录自带的 tsconfig.json 把 @deepseek-ai/* 指向宿主同一份源码，保证 cordis 实例同一；
+# DSH 检出移动或别名变化后，在本目录重跑：node sync-paths.mjs <宿主根>。
+#
+# 注意：include 不监听本文件变更，改完要重启 DSH；反过来，任何通过 loader 增删条目的
+# 操作都会重写本文件（注释会丢），所以平时直接编辑它、重启即可。
+
+- id: memory
+  name: './memory/src/index.ts'
+
+- id: memory-curated
+  name: './memory-curated/src/index.ts'
+
+- id: tool-memory
+  name: './tool-memory/src/index.ts'
+
+# 浏览器 tab 的宿主端点：GET /memory/state、POST /memory/write（Origin + 自定义头校验）
+- id: memory-api
+  name: './memory-api/src/index.ts'
+
+# 「记忆」tab 本体。宿主半边是空 apply；client-modules 从这个条目向上找到
+# ui-memory/package.json 的 dsh.client 与 exports["./client"]，把 lib/client.js 发给浏览器。
+- id: ui-memory
+  name: './ui-memory/lib/index.js'
